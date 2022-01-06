@@ -30,7 +30,7 @@ jobs:
           PGUSER_TEST: ${{ secrets.PGUSER_TEST }}
           PGDATABASE_TEST: ${{ secrets.PGDATABASE_TEST }}
           PGPASSWORD_TEST: ${{ secrets.PGPASSWORD_TEST }}
-          PGPOST_TEST: ${{ secrets.PGPORT_TEST }}
+          PGPORT_TEST: ${{ secrets.PGPORT_TEST }}
           PGHOST: ${{ secrets.PGHOST_TEST }}
           PGUSER: ${{ secrets.PGUSER_TEST }}
           PGDATABASE: ${{ secrets.PGDATABASE_TEST }}
