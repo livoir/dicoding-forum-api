@@ -2,6 +2,7 @@ const AddedComment = require('../../Domains/comments/entities/AddedComment');
 const CommentRepository = require('../../Domains/comments/CommentRepository');
 const AuthorizationError = require('../../Commons/exceptions/AuthorizationError');
 const NotFoundError = require('../../Commons/exceptions/NotFoundError');
+const mapDBToCommentModel = require('../../Commons/utils/MapDBToCommentModel');
 
 class CommentRepositoryPostgres extends CommentRepository {
   constructor(pool, idGenerator) {
@@ -45,35 +46,6 @@ class CommentRepositoryPostgres extends CommentRepository {
     }
   }
 
-  async findCommentById(commentId) {
-    const query = {
-      text: `SELECT comments.id, content, date, users.username, is_deleted FROM comments
-            JOIN users ON users.id = comments.owner WHERE comments.id=$1`,
-      values: [commentId],
-    };
-
-    const result = await this._pool.query(query);
-
-    if (result.rowCount === 0) {
-      throw new NotFoundError('comment id tidak ditemukan');
-    }
-
-    return result.rows.map(({
-
-      id,
-      content,
-      date,
-      username,
-      is_deleted,
-    }) => ({
-      id,
-      content,
-      date,
-      username,
-      isDeleted: is_deleted,
-    }));
-  }
-
   async verifyCommentAvailability(commentId) {
     const query = {
       text: 'SELECT * FROM comments WHERE id=$1',
@@ -82,7 +54,7 @@ class CommentRepositoryPostgres extends CommentRepository {
 
     const result = await this._pool.query(query);
 
-    if (result.rowCount === 0) {
+    if (!result.rowCount) {
       throw new NotFoundError('comment id tidak ditemukan');
     }
   }
@@ -96,20 +68,7 @@ class CommentRepositoryPostgres extends CommentRepository {
     };
 
     const result = await this._pool.query(query);
-    return result.rows.map(({
-
-      id,
-      content,
-      date,
-      username,
-      is_deleted,
-    }) => ({
-      id,
-      content,
-      date,
-      username,
-      isDeleted: is_deleted,
-    }));
+    return result.rows.map(mapDBToCommentModel);
   }
 }
 

@@ -63,36 +63,6 @@ describe('CommentRepositoryPostgres', () => {
     });
   });
 
-  describe('findCommentById function', () => {
-    it('should throw NotFoundError if comment not available', async () => {
-      const commentRepository = new CommentRepositoryPostgres(pool, {});
-      const commentId = 'comment-1234';
-      await CommentsTableTestHelper.addComment({ id: commentId });
-
-      await expect(commentRepository.findCommentById('comment-123')).rejects.toThrowError(NotFoundError);
-    });
-
-    it('should return comment if available', async () => {
-      const commentRepository = new CommentRepositoryPostgres(pool, {});
-      const addComment = {
-        id: 'comment-1234',
-        content: 'comment',
-        owner: 'user-234',
-        threadId: 'thread-1234',
-        date: '2021-02-04',
-      };
-      await CommentsTableTestHelper.addComment(addComment);
-
-      const comments = await commentRepository.findCommentById(addComment.id);
-
-      expect(comments).toHaveLength(1);
-      expect(comments[0].id).toEqual(addComment.id);
-      expect(comments[0].content).toEqual(addComment.content);
-      expect(comments[0].username).toEqual('dicoding');
-      expect(comments[0].date).toEqual(addComment.date);
-    });
-  });
-
   describe('verifyCommentOwner function', () => {
     it('should throw AuthorizationError if comment belongs to other user', async () => {
       const commentRepository = new CommentRepositoryPostgres(pool, {});
